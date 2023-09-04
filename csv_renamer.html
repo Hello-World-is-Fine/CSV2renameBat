@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CSV File Renamer</title>
+</head>
+<body>
+  <h1>CSV File Renamer</h1>
+  <p>Step 1: Please choose the csv file</p>
+  <p>sample of csv, save as ".csv" in excel <br><img src="csv.png"> </p>
+  <input type="file" id="csvFileInput" accept=".csv">
+<br>
+  <p>Step 2: Click this button, then copy the "rename_files.bat" at "Download", </p>	
+  <button onclick="processCSV()">Process CSV</button>
+<p>Step 3:Paste this "rename_files.bat" in the folder which contain all the files being rename. </p>
+<p>Step 4:Finally double click the "rename_files.bat" to run (accept all the risk as the follwing images)</p>
+
+<p><img src="img1.png"> > <img src="img2.png"></p>
+  <script>
+    function processCSV() {
+      var fileInput = document.getElementById('csvFileInput');
+      var file = fileInput.files[0];
+
+      if (file) {
+        var reader = new FileReader();
+
+        reader.onload = function (event) {
+          var csvData = event.target.result;
+          var lines = csvData.split('\n');
+          var batchScript = '';
+
+          for (var i = 1; i < lines.length; i++) {
+            var line = lines[i].trim();
+
+            if (line !== '') {
+              var values = line.split(',');
+              var oldName = values[0].trim();
+              var newName = values[1].trim();
+
+              batchScript += 'ren "' + oldName + '" "' + newName + '"\r\n';
+            }
+          }
+
+          // Create a download link for the batch script
+          var downloadLink = document.createElement('a');
+          downloadLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(batchScript);
+          downloadLink.download = 'rename_files.bat';
+          downloadLink.style.display = 'none';
+
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+        };
+
+        reader.readAsText(file);
+      } else {
+        console.log('No file selected.');
+      }
+    }
+  </script>
+</body>
+</html>
